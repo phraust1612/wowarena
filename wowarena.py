@@ -11,16 +11,17 @@ class wowLadder(QWidget):
         self.totalNo = 0
         self.initUI()
         self.apikey = "ks3xtugk5fdjdvp45h9yyq7756jszzg2"
-        self.Reload()
     def initUI(self):
         self.setFixedSize(890,550)
         self.center()
         self.setWindowTitle('wowLadder')
-        self.setWindowIcon(QIcon('m2.ico'))
+        self.setWindowIcon(QIcon('img/m2.ico'))
         self.setWindowFlags(Qt.CustomizeWindowHint)
         self.setWindowFlags(Qt.WindowTitleHint)
+        self.setWindowFlags(Qt.WindowCloseButtonHint)
 
         self.choice = QComboBox(self)
+        self.choice.addItem("선택하세요")
         self.choice.addItem("2v2")
         self.choice.addItem("3v3")
         self.choice.addItem("평전")
@@ -30,18 +31,27 @@ class wowLadder(QWidget):
         self.fr = []
         self.tx = []
         self.pg = []
+        self.profile = QPushButton(self)
+        self.profile.resize(500,500)
+        self.profile.move(200,20)
+        self.profile.setStyleSheet("background-color: white; border: 1px solid black")
+        self.profile.hide()
+        
         for i in range(0,10):
-            self.fr.append(QFrame(self))
-            self.tx.append(QLabel(self))
+            self.fr.append(QPushButton(self))
+            self.tx.append(QLabel(self.fr[i]))
             self.pg.append(QPushButton(self))
             self.fr[i].resize(500,48)
             self.fr[i].move(200,20 + 50*i)
-            self.tx[i].move(220,30 + 50*i)
+            self.tx[i].move(5,10)
             self.pg[i].resize(20,20)
             self.pg[i].move(215 + 50*i, 520)
-            self.pg[i].setText(str(i+1))
+            self.pg[i].setText("")
             self.pg[i].setStyleSheet("border: 0px")
-            self.fr[i].setStyleSheet("QFrame { background-color: white; border: 1px solid black }")
+            self.tx[i].setStyleSheet("border: 0px")
+            self.fr[i].setStyleSheet("background-color: white; border: 1px solid black")
+            self.fr[i].hide()
+            
         self.pg[0].clicked.connect(lambda: self.PageChoose(0))
         self.pg[1].clicked.connect(lambda: self.PageChoose(1))
         self.pg[2].clicked.connect(lambda: self.PageChoose(2))
@@ -52,6 +62,16 @@ class wowLadder(QWidget):
         self.pg[7].clicked.connect(lambda: self.PageChoose(7))
         self.pg[8].clicked.connect(lambda: self.PageChoose(8))
         self.pg[9].clicked.connect(lambda: self.PageChoose(9))
+        self.fr[0].clicked.connect(lambda: self.SeeProfile(0))
+        self.fr[1].clicked.connect(lambda: self.SeeProfile(1))
+        self.fr[2].clicked.connect(lambda: self.SeeProfile(2))
+        self.fr[3].clicked.connect(lambda: self.SeeProfile(3))
+        self.fr[4].clicked.connect(lambda: self.SeeProfile(4))
+        self.fr[5].clicked.connect(lambda: self.SeeProfile(5))
+        self.fr[6].clicked.connect(lambda: self.SeeProfile(6))
+        self.fr[7].clicked.connect(lambda: self.SeeProfile(7))
+        self.fr[8].clicked.connect(lambda: self.SeeProfile(8))
+        self.fr[9].clicked.connect(lambda: self.SeeProfile(9))
         self.pg[0].setStyleSheet("color: red; border: 0px")
         self.currentPageNo = 0
         self.show()
@@ -73,29 +93,58 @@ class wowLadder(QWidget):
             return
         self.Reload()
     def PageChoose(self,no):
-        i = int(self.pg[no].text())
-        if i<5:
+        try:
+            i = int(self.pg[no].text())
+        except ValueError:
+            i=1
+        self.profile.hide()
+        if i<6:
             self.pg[self.currentPageNo].setStyleSheet("color: black; border: 0px")
-            self.pg[no].setStyleSheet("color: red; border: 0px")
-            self.currentPageNo = no
-        elif i>=5 and i<self.maxPageNo-6:
+            self.currentPageNo = i-1
+            self.pg[self.currentPageNo].setStyleSheet("color: red; border: 0px")
+            self.pg[0].setText(str(1))
+            self.pg[1].setText(str(2))
+            self.pg[2].setText(str(3))
+            self.pg[3].setText(str(4))
+            self.pg[4].setText(str(5))
+            self.pg[5].setText(str(6))
+            self.pg[6].setText(str(7))
+            self.pg[7].setText(str(8))
+            self.pg[8].setText("...")
+            self.pg[9].setText(str(self.maxPageNo))
+        elif i>=6 and i<self.maxPageNo-6:
             self.pg[self.currentPageNo].setStyleSheet("color: black; border: 0px")
-            self.pg[3].setStyleSheet("color: red; border: 0px")
-            self.currentPageNo = 3
+            self.currentPageNo = 4
+            self.pg[self.currentPageNo].setStyleSheet("color: red; border: 0px")
+            self.pg[0].setText(str(1))
             self.pg[1].setText("...")
-            self.pg[2].setText(str(i-1))
-            self.pg[3].setText(str(i))
-            self.pg[4].setText(str(i+1))
-            self.pg[5].setText(str(i+2))
-            self.pg[6].setText(str(i+3))
-            self.pg[7].setText(str(i+4))
+            self.pg[2].setText(str(i-2))
+            self.pg[3].setText(str(i-1))
+            self.pg[4].setText(str(i))
+            self.pg[5].setText(str(i+1))
+            self.pg[6].setText(str(i+2))
+            self.pg[7].setText(str(i+3))
             self.pg[8].setText("...")
             self.pg[9].setText(str(self.maxPageNo))
         else:
             self.pg[self.currentPageNo].setStyleSheet("color: black; border: 0px")
-            self.pg[no].setStyleSheet("color: red; border: 0px")
-            
+            self.currentPageNo = 9 - self.maxPageNo + i
+            self.pg[self.currentPageNo].setStyleSheet("color: red; border: 0px")
+            self.pg[0].setText(str(1))
+            self.pg[1].setText("...")
+            self.pg[2].setText(str(self.maxPageNo-7))
+            self.pg[3].setText(str(self.maxPageNo-6))
+            self.pg[4].setText(str(self.maxPageNo-5))
+            self.pg[5].setText(str(self.maxPageNo-4))
+            self.pg[6].setText(str(self.maxPageNo-3))
+            self.pg[7].setText(str(self.maxPageNo-2))
+            self.pg[8].setText(str(self.maxPageNo-1))
+            self.pg[9].setText(str(self.maxPageNo))
         self.ShowPage(i)
+    def SeeProfile(self,no):
+        for i in range(0,10):
+            self.fr[i].hide()
+        self.profile.show()
     def Reload(self):
         url = ""
         if self.mode == 1:
@@ -112,7 +161,7 @@ class wowLadder(QWidget):
             self.ladder = res.json()
             self.totalNo = len(self.ladder['rows'])
             self.maxPageNo = int((self.totalNo-1)/10)+1
-            self.ShowPage(1)
+            self.PageChoose(0)
             return 0
         else:
             return -2
@@ -124,17 +173,22 @@ class wowLadder(QWidget):
         i = no - 1
         i *= 10
         count = 0
-        while count<10 and i<self.totalNo:
-            tmp = "랭킹 "
-            tmp += str(self.ladder['rows'][i]['ranking'])
-            tmp += " 위      레이팅 : "
-            tmp += str(self.ladder['rows'][i]['rating'])
-            tmp += "\n서버 : "
-            tmp += self.ladder['rows'][i]['realmName']
-            tmp += "          "
-            tmp += self.ClassName(self.ladder['rows'][i]['classId'])
-            tmp += "    "
-            tmp += self.ladder['rows'][i]['name']
+        while count<10:
+            if i>=self.totalNo:
+                tmp = ""
+                self.fr[count].hide()
+            else:
+                tmp = "랭킹 "
+                tmp += str(self.ladder['rows'][i]['ranking'])
+                tmp += " 위      레이팅 : "
+                tmp += str(self.ladder['rows'][i]['rating'])
+                tmp += "\n서버 : "
+                tmp += self.ladder['rows'][i]['realmName']
+                tmp += "\t\t"
+                tmp += self.ClassName(self.ladder['rows'][i]['classId'])
+                tmp += "    "
+                tmp += self.ladder['rows'][i]['name']
+                self.fr[count].show()
             self.tx[count].setText(tmp)
             self.tx[count].adjustSize()
             count += 1
