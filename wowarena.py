@@ -73,10 +73,28 @@ class wowLadder(QWidget):
             return
         self.Reload()
     def PageChoose(self,no):
-        self.pg[no].setStyleSheet("color: red; border: 0px")
-        self.pg[self.currentPageNo].setStyleSheet("color: black; border: 0px")
-        self.currentPageNo = no
         i = int(self.pg[no].text())
+        if i<5:
+            self.pg[self.currentPageNo].setStyleSheet("color: black; border: 0px")
+            self.pg[no].setStyleSheet("color: red; border: 0px")
+            self.currentPageNo = no
+        elif i>=5 and i<self.maxPageNo-6:
+            self.pg[self.currentPageNo].setStyleSheet("color: black; border: 0px")
+            self.pg[3].setStyleSheet("color: red; border: 0px")
+            self.currentPageNo = 3
+            self.pg[1].setText("...")
+            self.pg[2].setText(str(i-1))
+            self.pg[3].setText(str(i))
+            self.pg[4].setText(str(i+1))
+            self.pg[5].setText(str(i+2))
+            self.pg[6].setText(str(i+3))
+            self.pg[7].setText(str(i+4))
+            self.pg[8].setText("...")
+            self.pg[9].setText(str(self.maxPageNo))
+        else:
+            self.pg[self.currentPageNo].setStyleSheet("color: black; border: 0px")
+            self.pg[no].setStyleSheet("color: red; border: 0px")
+            
         self.ShowPage(i)
     def Reload(self):
         url = ""
@@ -147,7 +165,7 @@ class wowLadder(QWidget):
         elif no == 12:
             return "악마사냥꾼"
         else:
-            return "알 수 없음"
+            return str(no)
     def RaceName(self, no):
         if no == 1:
             return "인간"
@@ -176,7 +194,7 @@ class wowLadder(QWidget):
         elif no == 24 or 25 or 26:
             return "판다렌"
         else:
-            return "알 수 없음"
+            return str(no)
 
 app = QApplication(sys.argv)
 MD = wowLadder()
